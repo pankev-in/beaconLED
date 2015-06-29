@@ -3,11 +3,13 @@ package com.example.kpan.beacon;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconConsumer;
@@ -23,7 +25,10 @@ import java.util.Iterator;
 public class MainActivity extends Activity implements BeaconConsumer{
 
     protected static final String TAG = "MainActivity";
-    private Button button;
+    protected static final String TARGET_UUID = "74278bda-b644-4520-8f0c-720eaf059935";
+    protected static final double TARGET_Distance = 1.000;
+    private Button buttonStartStop;
+    private TextView distanceText;
     private Region region;
     private BeaconManager beaconManager;
     private boolean runningOrNot=false;
@@ -46,8 +51,9 @@ public class MainActivity extends Activity implements BeaconConsumer{
 
 
         //Setup other view objects:
-        button = (Button) findViewById(R.id.button);
-        button.setOnClickListener(
+        buttonStartStop = (Button) findViewById(R.id.button_startStop);
+        distanceText = (TextView) findViewById(R.id.textView_DistanceMeter);
+        buttonStartStop.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -58,29 +64,58 @@ public class MainActivity extends Activity implements BeaconConsumer{
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         Log.d(TAG, "Program onDestroy Method is called");
         beaconManager.unbind(this);
+        super.onDestroy();
     }
 
     @Override
     public void onBeaconServiceConnect() {
     }
 
-    private void startScanning(){
-        beaconManager.setRangeNotifier(new RangeNotifier() {
-            @Override
-            public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
-                if (beacons.size() > 0) {
-                    Iterator<Beacon> beaconIterator = beacons.iterator();
-                    while (beaconIterator.hasNext()) {
-                        Beacon beacon = beaconIterator.next();
-                        Log.d(TAG,"Found Beacon:"+beacon.getId1()+"  Distance:"+beacon.getDistance());
+    RangeNotifier rangeNotifier = new RangeNotifier() {
+        @Override
+        public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
+            if (beacons.size() > 0) {
+                Iterator<Beacon> beaconIterator = beacons.iterator();
+                while (beaconIterator.hasNext()) {
+                    Beacon beacon = beaconIterator.next();
+                    Log.d(TAG,"Found Beacon:"+beacon.getId1()+"  Distance:"+beacon.getDistance());
+                    if(beacon.getId1().toString().equals(TARGET_UUID)){
+                        foundTarget(beacon);
                     }
                 }
             }
-        });
+        }
+    };
 
+    private void foundTarget(Beacon beacon){
+        displayDistance(beacon.getDistance());
+        if (beacon.getDistance()< TARGET_Distance){
+            final Intent intent = new Intent(this, DeviceControlActivity.class);
+            intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_NAME, beacon.getBluetoothName());
+            intent.putExtra(DeviceControlActivity.EXTRAS_DEVICE_ADDRESS, beacon.getBluetoothAddress());
+            stopScanning();
+            beaconManager.unbind(this);
+
+            startActivity(intent);
+        }
+    }
+
+    private void displayDistance(Double i){
+        final float Distance = i.floatValue();
+        distanceText.post(new Runnable() {
+            @Override
+            public void run() {
+                distanceText.setText(Float.toString(Distance));
+            }
+        });
+    }
+
+
+    private void startScanning(){
+        runningOrNot=true;
+        beaconManager.setRangeNotifier(rangeNotifier);
         try {
             beaconManager.startRangingBeaconsInRegion(region);
         } catch (RemoteException e) {
@@ -89,6 +124,7 @@ public class MainActivity extends Activity implements BeaconConsumer{
     }
 
     private void stopScanning(){
+        runningOrNot=false;
         try {
             beaconManager.stopRangingBeaconsInRegion(region);
         } catch (RemoteException e) {
@@ -98,14 +134,12 @@ public class MainActivity extends Activity implements BeaconConsumer{
 
     private void buttonClick(){
         if(runningOrNot==false){
-            button.setText("stop");
+            buttonStartStop.setText("stop");
             startScanning();
-            runningOrNot=true;
         }
         else{
-            button.setText("start");
+            buttonStartStop.setText("start");
             stopScanning();
-            runningOrNot=false;
         }
     }
 
