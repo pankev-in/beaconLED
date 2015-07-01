@@ -5,14 +5,14 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
 
-    <string name="ble_not_supported">您的设备不支持BLE</string>
+    <string name="ble_not_supported">Your device does not support BLE</string>
     <string name="label_data">Data:</string>
     <string name="label_device_address">Device address:</string>
     <string name="label_state">State:</string>
     <string name="no_data">No Connection</string>
     <string name="connected">Connected</string>
     <string name="disconnected">Disconnected</string>
-    <string name="title_devices">查找BLE设备</string>
+    <string name="title_devices">Find BLE Device</string>
     <string name="error_bluetooth_not_supported">Bluetooth not supported.</string>
 
     <string name="unknown_device">Unknown device</string>
@@ -22,8 +22,8 @@
     <string name="send">Send</string>
 
     <!-- Menu items -->
-    <string name="menu_connect">连接</string>
-    <string name="menu_disconnect">断开</string>
-    <string name="menu_scan">搜索</string>
-    <string name="menu_stop">停止</string>
+    <string name="menu_connect">Connect</string>
+    <string name="menu_disconnect">Disconnect</string>
+    <string name="menu_scan">Search</string>
+    <string name="menu_stop">Stop</string>
 </resources>

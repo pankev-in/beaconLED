@@ -147,7 +147,6 @@ public class DeviceControlActivity extends Activity {
         // Sets up UI references.
         mDataField = (TextView) findViewById(R.id.data_value);
         edtSend = (EditText) this.findViewById(R.id.edtSend);
-        edtSend.setText("command here");
         svResult = (ScrollView) this.findViewById(R.id.svResult);
         
         btnSend = (Button) this.findViewById(R.id.btnSend);
@@ -235,7 +234,7 @@ public class DeviceControlActivity extends Activity {
     
     private void ShowDialog()
     {
-    	Toast.makeText(this, "���ӳɹ������ڿ�����ͨ�ţ�", Toast.LENGTH_SHORT).show();
+    	Toast.makeText(this, "Device Connected", Toast.LENGTH_SHORT).show();
     }
 
 	class ClickEvent implements View.OnClickListener {
@@ -245,7 +244,7 @@ public class DeviceControlActivity extends Activity {
 				if(!mConnected) return;
 				
 				if (edtSend.length() < 1) {
-					Toast.makeText(DeviceControlActivity.this, "������Ҫ���͵�����", Toast.LENGTH_SHORT).show();
+					Toast.makeText(DeviceControlActivity.this, "Command is too short", Toast.LENGTH_SHORT).show();
 					return;
 				}
 				mBluetoothLeService.WriteValue(edtSend.getText().toString());

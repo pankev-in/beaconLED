@@ -35,4 +35,17 @@
         android:text="Start"
         android:id="@+id/button_startStop"
         />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Author: Kevin Pan"
+        android:id="@+id/textView_author" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Software Version: 1.0"
+        android:id="@+id/textView_softwareVersion" />
 </LinearLayout>
